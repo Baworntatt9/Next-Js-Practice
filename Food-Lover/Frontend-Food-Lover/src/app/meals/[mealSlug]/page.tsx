@@ -3,13 +3,36 @@ import Image from "next/image";
 import { getMeal } from "@/libs/meals";
 import classes from "./page.module.css";
 import { MealItem } from "@interfaces";
+import { notFound } from "next/navigation";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ mealSlug: string }>;
+}) {
+  const meal = (await getMeal({ slug: (await params).mealSlug })) as MealItem;
+
+  if (!meal) {
+    notFound();
+  }
+
+  return {
+    title: meal.title,
+    description: meal.summary,
+  };
+}
 
 export default async function MealDetailsPage({
   params,
 }: {
-  params: { mealSlug: string };
+  params: Promise<{ mealSlug: string }>;
 }) {
-  const meal = (await getMeal({ slug: params.mealSlug })) as MealItem;
+  const resolvedParams = await params;
+  const meal = (await getMeal({ slug: resolvedParams.mealSlug })) as MealItem;
+
+  if (!meal) {
+    notFound();
+  }
 
   meal.instructions = meal.instructions.replace(/\n/g, "<br />");
 
@@ -17,7 +40,11 @@ export default async function MealDetailsPage({
     <>
       <header className={classes.header}>
         <div className={classes.image}>
-          <Image fill src={meal.image} alt={meal.title} />
+          <Image
+            src={`https://baworntatt-nextjs-food-lover.s3.ap-southeast-2.amazonaws.com/${meal.image}`}
+            alt={meal.title}
+            fill
+          />
         </div>
         <div className={classes.headerText}>
           <h1>{meal.title}</h1>

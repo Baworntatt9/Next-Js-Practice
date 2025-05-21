@@ -9,13 +9,13 @@ export default function CommunityPage() {
   return (
     <>
       <header className={classes.header}>
-        <h1>
+        <h1 className="text-4xl font-bold mb-3">
           One shared passion: <span className={classes.highlight}>Food</span>
         </h1>
         <p>Join our community and share your favorite recipes!</p>
       </header>
       <main className={classes.main}>
-        <h2>Community Perks</h2>
+        <h2 className="text-3xl font-bold mb-3">Community Perks</h2>
 
         <ul className={classes.perks}>
           <li>

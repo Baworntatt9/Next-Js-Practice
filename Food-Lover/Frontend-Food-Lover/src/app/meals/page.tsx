@@ -5,6 +5,11 @@ import { getMeals } from "@/libs/meals";
 import { MealItem } from "@interfaces";
 import { Suspense } from "react";
 
+export const metadata = {
+  title: "All Meals",
+  description: "Browse the delicious meals shared by our vibrant community.",
+};
+
 async function Meals() {
   const meals = await getMeals();
   return <MealsGrid meals={meals as MealItem[]} />;
@@ -14,7 +19,7 @@ export default function MealsPage() {
   return (
     <>
       <header className={classes.header}>
-        <h1>
+        <h1 className="text-4xl font-bold mb-3">
           Delicious meals, created{" "}
           <span className={classes.highlight}>by you</span>
         </h1>
