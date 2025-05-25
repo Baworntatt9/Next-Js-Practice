@@ -1,13 +1,15 @@
 "use client";
 
-import { useFormStatus } from "react-dom";
+import { useFormContext } from "react-hook-form";
+import { Button } from "../ui/button";
 
 export default function MealsFormSubmit() {
-  const { pending } = useFormStatus();
+  const { formState } = useFormContext();
+  const { isSubmitting } = formState;
 
   return (
-    <button type="submit" disabled={pending}>
-      {pending ? "Submitting..." : "Share Meal"}
-    </button>
+    <Button type="submit" disabled={isSubmitting}>
+      {isSubmitting ? "Submitting..." : "Share Meal"}
+    </Button>
   );
 }

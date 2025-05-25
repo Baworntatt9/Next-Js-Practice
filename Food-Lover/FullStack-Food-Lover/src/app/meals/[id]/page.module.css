@@ -37,7 +37,6 @@
 .creator {
   font-size: 1.5rem;
   color: #cfa69b;
-  font-style: italic;
 }
 
 .creator a {
@@ -68,7 +67,6 @@
   border-radius: 8px;
   box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.5);
   padding: 2rem;
-  padding-top: 0rem;
   max-width: 60rem;
   margin: 2rem auto;
   animation: fade-slide-in-from-bottom 1s ease-out forwards;

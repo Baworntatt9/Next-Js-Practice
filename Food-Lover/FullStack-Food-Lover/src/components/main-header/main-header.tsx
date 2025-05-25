@@ -5,6 +5,7 @@ import logoTmg from "/assets/logo.png";
 import classes from "./main-header.module.css";
 import MainHeaderBackground from "./main-header-background";
 import NavLink from "./nav-link";
+import SelectLoginLogout from "./select-login-logout";
 
 export default function MainHeader() {
   return (
@@ -23,6 +24,9 @@ export default function MainHeader() {
             </li>
             <li>
               <NavLink href="/community">Foodies Community</NavLink>
+            </li>
+            <li>
+              <SelectLoginLogout />
             </li>
           </ul>
         </nav>

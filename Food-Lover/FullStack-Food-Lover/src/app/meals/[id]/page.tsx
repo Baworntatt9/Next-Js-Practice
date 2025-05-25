@@ -8,9 +8,9 @@ import { notFound } from "next/navigation";
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ mealSlug: string }>;
+  params: Promise<{ id: string }>;
 }) {
-  const meal = (await getMeal({ slug: (await params).mealSlug })) as MealItem;
+  const meal = (await getMeal({ id: (await params).id })) as MealItem;
 
   if (!meal) {
     notFound();
@@ -25,10 +25,10 @@ export async function generateMetadata({
 export default async function MealDetailsPage({
   params,
 }: {
-  params: Promise<{ mealSlug: string }>;
+  params: Promise<{ id: string }>;
 }) {
   const resolvedParams = await params;
-  const meal = (await getMeal({ slug: resolvedParams.mealSlug })) as MealItem;
+  const meal = (await getMeal({ id: resolvedParams.id })).data as MealItem;
 
   if (!meal) {
     notFound();
@@ -49,7 +49,7 @@ export default async function MealDetailsPage({
         <div className={classes.headerText}>
           <h1>{meal.title}</h1>
           <p className={classes.creator}>
-            by <a href={`mailto:${meal.creator_email}`}>{meal.creator}</a>
+            by <a href={`mailto:${meal.creator_email}`}>{meal.creator_name}</a>
           </p>
           <p className={classes.summary}>{meal.summary}</p>
         </div>

@@ -1,11 +1,10 @@
-// import fs from "node:fs";
-
 import { S3 } from "@aws-sdk/client-s3";
 
 import { MealItem } from "@interfaces";
-import sql from "better-sqlite3";
 import slugify from "slugify";
 import xss from "xss";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 
 const s3 = new S3({
   region: "ap-southeast-2",
@@ -18,21 +17,41 @@ const s3 = new S3({
       : undefined,
 });
 
-const db = sql("meals.db");
-
 export async function getMeals() {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
-  const stmt = db.prepare("SELECT * FROM meals");
-  // new throw Error("Error fetching meals");
-  return stmt.all();
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  const response = await fetch("http://localhost:5000/api/v1/menus", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Error fetching meals");
+  }
+  const meals = await response.json();
+  return meals;
 }
 
-export async function getMeal({ slug }: { slug: string }) {
-  const stmt = db.prepare("SELECT * FROM meals WHERE slug = ?");
-  return stmt.get(slug);
+export async function getMeal({ id }: { id: string }) {
+  const response = await fetch(`http://localhost:5000/api/v1/menus/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Error fetching meal");
+  }
+  const meal = await response.json();
+  return meal;
 }
 
 export async function saveMeal({ meal }: { meal: MealItem }) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.token) {
+    throw new Error("User not authenticated");
+  }
+
   meal.slug = slugify(meal.title, { lower: true });
   meal.instructions = xss(meal.instructions);
 
@@ -41,6 +60,22 @@ export async function saveMeal({ meal }: { meal: MealItem }) {
 
   const bufferedImage = await meal.image.arrayBuffer();
 
+  meal.image = fileName;
+  console.log("meal: ", JSON.stringify(meal as any));
+  console.log("session: ", session);
+
+  const response = await fetch("http://localhost:5000/api/v1/menus", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${session.user.token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(meal),
+  });
+  if (!response.ok) {
+    throw new Error("Error saving meal");
+  }
+
   await s3.putObject({
     Bucket: "baworntatt-nextjs-food-lover",
     Key: fileName,
@@ -48,21 +83,6 @@ export async function saveMeal({ meal }: { meal: MealItem }) {
     ContentType: meal.image.type,
   });
 
-  meal.image = fileName;
-
-  db.prepare(
-    `
-    INSERT INTO Meals
-      (title, summary, instructions, creator, creator_email, image, slug)
-    VALUES(
-      @title,
-      @summary,
-      @instructions,
-      @creator,
-      @creator_email,
-      @image,
-      @slug
-    )
-    `
-  ).run(meal);
+  const savedMeal = await response.json();
+  return savedMeal;
 }

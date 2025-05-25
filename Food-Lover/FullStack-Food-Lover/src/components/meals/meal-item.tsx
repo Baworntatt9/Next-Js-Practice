@@ -4,17 +4,17 @@ import Image from "next/image";
 import classes from "./meal-item.module.css";
 
 export default function MealItem({
+  id,
   title,
-  slug,
   image,
   summary,
-  creator,
+  creator_name,
 }: {
+  id: string;
   title: string;
-  slug: string;
   image: string;
   summary: string;
-  creator: string;
+  creator_name: string;
 }) {
   return (
     <article className={classes.meal}>
@@ -28,13 +28,13 @@ export default function MealItem({
         </div>
         <div className={classes.headerText}>
           <h2>{title}</h2>
-          <p>by {creator}</p>
+          <p>by {creator_name}</p>
         </div>
       </header>
       <div className={classes.content}>
         <p className={classes.summary}>{summary}</p>
         <div className={classes.actions}>
-          <Link href={`/meals/${slug}`}>View Details</Link>
+          <Link href={`/meals/${id}`}>View Details</Link>
         </div>
       </div>
     </article>

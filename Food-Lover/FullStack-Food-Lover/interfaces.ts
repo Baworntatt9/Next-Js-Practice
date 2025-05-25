@@ -4,7 +4,7 @@ export interface MealItem {
   title: string;
   slug: string;
   summary: string;
-  creator: string;
+  creator_name: string;
   creator_email: string;
   instructions: string;
 }

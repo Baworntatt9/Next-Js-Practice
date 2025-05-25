@@ -1,9 +1,9 @@
-import Link from "next/link";
 import classes from "./page.module.css";
 import MealsGrid from "@/components/meals/meals-grid";
 import { getMeals } from "@/libs/meals";
 import { MealItem } from "@interfaces";
 import { Suspense } from "react";
+import MealShareButton from "@/components/meals/meal-share-button";
 
 export const metadata = {
   title: "All Meals",
@@ -12,10 +12,10 @@ export const metadata = {
 
 async function Meals() {
   const meals = await getMeals();
-  return <MealsGrid meals={meals as MealItem[]} />;
+  return <MealsGrid meals={meals.data as MealItem[]} />;
 }
 
-export default function MealsPage() {
+export default async function MealsPage() {
   return (
     <>
       <header className={classes.header}>
@@ -26,9 +26,7 @@ export default function MealsPage() {
         <p>
           Choose your favorite recipe and cook it yourself. It is easy and fun!
         </p>
-        <p className={classes.cta}>
-          <Link href="/meals/share">Share Your Favorite Recipe</Link>
-        </p>
+        <MealShareButton />
       </header>
       <main className={classes.main}>
         <Suspense
